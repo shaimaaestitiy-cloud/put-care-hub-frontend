@@ -1,97 +1,192 @@
-export default function TodaysAppointments() {
-  const appointments = [
-    {
-      owner: "Ahmad Khalil",
-      pet: "Max (Dog)",
-      time: "9:00 AM",
-      type: "Regular Checkup",
-      status: "Confirmed",
-    },
-    {
-      owner: "Lina Saleh",
-      pet: "Whiskers (Cat)",
-      time: "10:30 AM",
-      type: "Vaccination",
-      status: "Confirmed",
-    },
-    {
-      owner: "Omar Nasser",
-      pet: "Rocky (Dog)",
-      time: "11:15 AM",
-      type: "Emergency",
-      status: "Pending",
-    },
-    {
-      owner: "Rana Fares",
-      pet: "Milo (Cat)",
-      time: "1:00 PM",
-      type: "Follow-up",
-      status: "Confirmed",
-    },
-    {
-      owner: "Yousef Hamdan",
-      pet: "Bella (Dog)",
-      time: "2:30 PM",
-      type: "Regular Checkup",
-      status: "Pending",
-    },
-  ];
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+type Appointment = {
+  id: number;
+  petId: number;
+  petName: string;
+  date: string;
+  time: string;
+  reason: string;
+  status: string;
+};
+
+export default function DoctorAppointments() {
+  const router = useRouter();
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+
+  useEffect(() => {
+    const savedAppointments: Appointment[] = JSON.parse(
+      localStorage.getItem("appointments") || "[]"
+    );
+
+    setAppointments(savedAppointments);
+  }, []);
+
+  function updateStatus(
+    appointmentId: number,
+    newStatus: string
+  ) {
+    const updatedAppointments = appointments.map((appointment) =>
+      appointment.id === appointmentId
+        ? { ...appointment, status: newStatus }
+        : appointment
+    );
+
+    localStorage.setItem(
+      "appointments",
+      JSON.stringify(updatedAppointments)
+    );
+
+    setAppointments(updatedAppointments);
+  }
+
+  function getStatusStyle(status: string) {
+    if (status === "Confirmed") {
+      return "bg-green-100 text-green-700";
+    }
+
+    if (status === "Completed") {
+      return "bg-blue-100 text-blue-700";
+    }
+
+    if (status === "Cancelled") {
+      return "bg-red-100 text-red-700";
+    }
+
+    return "bg-yellow-100 text-yellow-700";
+  }
 
   return (
-    <main className="min-h-screen bg-background px-6 py-10">
-      <div className="max-w-5xl mx-auto">
-        <h1 className="text-3xl font-bold text-primary mb-2">
-          Today&apos;s Appointments
-        </h1>
-        <p className="text-gray-500 mb-8">View and manage today&apos;s bookings</p>
+    <div className="min-h-screen bg-[#FFF9F1]">
+      <main className="max-w-6xl mx-auto px-6 py-10">
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50 border-b border-gray-100">
-              <tr>
-                <th className="px-6 py-3 text-sm font-semibold text-gray-600">
-                  Owner
-                </th>
-                <th className="px-6 py-3 text-sm font-semibold text-gray-600">
-                  Pet
-                </th>
-                <th className="px-6 py-3 text-sm font-semibold text-gray-600">
-                  Time
-                </th>
-                <th className="px-6 py-3 text-sm font-semibold text-gray-600">
-                  Type
-                </th>
-                <th className="px-6 py-3 text-sm font-semibold text-gray-600">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {appointments.map((a) => (
-                <tr key={a.owner} className="border-b border-gray-50 last:border-0">
-                  <td className="px-6 py-4 text-gray-800 font-medium">
-                    {a.owner}
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">{a.pet}</td>
-                  <td className="px-6 py-4 text-gray-600">{a.time}</td>
-                  <td className="px-6 py-4 text-gray-600">{a.type}</td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        a.status === "Confirmed"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {a.status}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <button
+          onClick={() => router.push("/doctor/dashboard")}
+          className="text-[#315C4B] font-semibold mb-6 hover:underline"
+        >
+          ← Back to Dashboard
+        </button>
+
+        <div className="mb-8">
+          <p className="text-[#E8874A] font-semibold mb-2">
+            👨‍⚕️ Veterinarian
+          </p>
+
+          <h1 className="text-4xl font-bold text-[#315C4B]">
+            Appointments
+          </h1>
+
+          <p className="text-gray-500 mt-2">
+            View and manage pet appointments.
+          </p>
         </div>
-      </div>
-    </main>
+
+        {appointments.length === 0 ? (
+          <div className="bg-white rounded-3xl shadow-sm p-10 text-center">
+            <div className="text-5xl mb-4">📅</div>
+
+            <h2 className="text-2xl font-bold text-[#315C4B]">
+              No appointments yet
+            </h2>
+
+            <p className="text-gray-500 mt-2">
+              Appointments booked by pet owners will appear here.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-5">
+
+            {appointments.map((appointment) => (
+              <div
+                key={appointment.id}
+                className="bg-white rounded-2xl shadow-sm p-6"
+              >
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+
+                  <div>
+                    <p className="text-[#E8874A] font-semibold">
+                      📅 {appointment.date} • {appointment.time}
+                    </p>
+
+                    <h2 className="text-2xl font-bold text-[#315C4B] mt-2">
+                      🐾 {appointment.petName}
+                    </h2>
+
+                    <p className="text-gray-600 mt-2">
+                      <span className="font-semibold">
+                        Reason:
+                      </span>{" "}
+                      {appointment.reason}
+                    </p>
+
+                    <div className="mt-3">
+                      <span
+                        className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${getStatusStyle(
+                          appointment.status
+                        )}`}
+                      >
+                        {appointment.status}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+
+                    {appointment.status === "Pending" && (
+                      <button
+                        onClick={() =>
+                          updateStatus(
+                            appointment.id,
+                            "Confirmed"
+                          )
+                        }
+                        className="bg-[#315C4B] text-white px-4 py-2 rounded-xl font-semibold hover:opacity-90"
+                      >
+                        ✓ Confirm
+                      </button>
+                    )}
+
+                    {appointment.status === "Confirmed" && (
+                      <button
+                        onClick={() =>
+                          updateStatus(
+                            appointment.id,
+                            "Completed"
+                          )
+                        }
+                        className="bg-[#E8874A] text-white px-4 py-2 rounded-xl font-semibold hover:opacity-90"
+                      >
+                        ✓ Complete
+                      </button>
+                    )}
+
+                    {appointment.status !== "Cancelled" &&
+                      appointment.status !== "Completed" && (
+                        <button
+                          onClick={() =>
+                            updateStatus(
+                              appointment.id,
+                              "Cancelled"
+                            )
+                          }
+                          className="bg-red-500 text-white px-4 py-2 rounded-xl font-semibold hover:opacity-90"
+                        >
+                          ✕ Cancel
+                        </button>
+                      )}
+
+                  </div>
+                </div>
+              </div>
+            ))}
+
+          </div>
+        )}
+
+      </main>
+    </div>
   );
 }

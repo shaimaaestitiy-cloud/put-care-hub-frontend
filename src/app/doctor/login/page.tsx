@@ -1,66 +1,94 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function DoctorLogin() {
-  const [username, setUsername] = useState("");
+  const router = useRouter();
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  function handleLogin(e: React.FormEvent) {
     e.preventDefault();
-    // هون رح نضيف لاحقًا منطق التحقق من تسجيل الدخول
-    console.log("Username:", username, "Password:", password);
-  };
+
+    // مؤقتًا: بعد تسجيل الدخول ننتقل مباشرة للـ Dashboard
+    router.push("/doctor/dashboard");
+  }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-background px-4">
-      <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-        <div className="text-center mb-6">
-          <span className="text-4xl">🐾</span>
-          <h1 className="text-2xl font-bold text-primary mt-2">
+    <main className="min-h-screen bg-[#FFF9F1] flex items-center justify-center px-6">
+      <div className="w-full max-w-md bg-white rounded-3xl shadow-lg p-8">
+        
+        <div className="text-center mb-8">
+          <div className="text-5xl mb-3">🐾</div>
+
+          <h1 className="text-3xl font-bold text-[#315C4B]">
             Veterinarian Login
           </h1>
-          <p className="text-gray-500 text-sm mt-1">
-            Access your clinic dashboard
+
+          <p className="text-gray-500 mt-2">
+            Sign in to manage your clinic
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleLogin} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Username
+            <label className="block text-sm font-semibold text-[#315C4B] mb-2">
+              Email Address
             </label>
+
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="Enter your username"
+              type="email"
               required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="vet@example.com"
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-[#E8874A]"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-semibold text-[#315C4B] mb-2">
               Password
             </label>
+
             <input
               type="password"
+              required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
               placeholder="Enter your password"
-              required
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 outline-none focus:border-[#E8874A]"
             />
           </div>
 
           <button
             type="submit"
-            className="bg-primary text-white py-2 rounded-lg font-medium hover:bg-primary-dark mt-2"
+            className="w-full bg-[#315C4B] text-white py-3 rounded-xl font-semibold hover:opacity-90 transition"
           >
-            Login
+            Sign In 🐾
           </button>
         </form>
+
+        <div className="text-center mt-7">
+          <p className="text-gray-500">
+            Don't have an account?
+          </p>
+
+          <button
+            onClick={() => router.push("/doctor/register")}
+            className="text-[#E8874A] font-bold mt-1 hover:underline"
+          >
+            Create New Account
+          </button>
+        </div>
+
+        <button
+          onClick={() => router.push("/")}
+          className="block mx-auto mt-6 text-sm text-gray-400 hover:text-[#315C4B]"
+        >
+          ← Back to Home
+        </button>
       </div>
     </main>
   );
