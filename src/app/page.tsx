@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-
+import Footer from "./components/Footer";
 function PawIcon() {
   return (
     <svg viewBox="0 0 64 64" className="h-10 w-10" aria-hidden="true">
@@ -43,6 +43,7 @@ function PawIcon() {
 
 export default function Home() {
   return (
+    <>
     <main className="relative min-h-[calc(100vh-76px)] overflow-hidden bg-[#fffaf3]">
 
       {/* =========================
@@ -158,7 +159,7 @@ export default function Home() {
               {/* BUTTON */}
 
               <Link
-                href="/client"
+                href="/owner/login"
                 className="group relative mt-3 flex h-[54px] w-full items-center justify-center rounded-full bg-[#2c8061] pl-[68px] pr-12 font-bold text-white shadow-[0_8px_18px_rgba(35,128,95,0.25)] transition duration-200 hover:-translate-y-0.5 hover:bg-[#216c50]"
               >
 
@@ -329,5 +330,7 @@ export default function Home() {
       </div>
 
     </main>
+    <Footer />
+    </>
   );
 }
